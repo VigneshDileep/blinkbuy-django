@@ -1413,3 +1413,18 @@ a[class*=card]:hover .title {
 }
 
 /*# sourceMappingURL=ui.css.map */
+
+/* PayPal button fixes */
+.paypal-button-container,
+#paypal-button-container {
+    width: 100% !important;
+}
+
+.paypal-button {
+    width: 100% !important;
+    min-height: 50px !important;
+}
+
+.paypal-button-tag-content {
+    display: none !important;
+}

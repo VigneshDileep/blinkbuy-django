@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'accounts',
     'store',
     'carts',
+    'orders',
+    'paypal.standard.ipn',
 ]
 
 MIDDLEWARE = [
@@ -51,6 +53,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'csp.middleware.CSPMiddleware'
 ]
 
 ROOT_URLCONF = 'BlinkBuy.urls'
@@ -151,3 +154,12 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'vigneshdileep123@gmail.com'
 EMAIL_HOST_PASSWORD = 'xbjs kfln lxse yner'
 EMAIL_USE_TLS = True
+
+
+# Paypal conf
+PAYPAL_RECEIVER_EMAIL = "blinkbuybusiness@gmail.com"
+PAYPAL_TEST = True
+
+
+PAYPAL_CLIENT_ID = 'AfeATFq9ctivzEAvRv_Slzjgh4lujgA0ti8OqjMP6vU9G9hIe3tOb-ko5Or3BTKhqAuvQkIXM3AxPOCJ' 
+PAYPAL_CLIENT_SECRET = 'EHvmoQNiqtkHa0TroPv7RB6dhQyP5G7KYLw5AjXSGHZcJ9hAWw5p4mVFAuCgNOUk-z6lL4T5cyoKrN7F'

@@ -20,7 +20,7 @@ def store(request, category_slug=None):
     else:
         products = Product.objects.all().filter(is_available=True).order_by('id')
         product_count = products.count()
-
+ 
     # add paginator here
     paginator = Paginator(products, 3)
     page = request.GET.get('page')
