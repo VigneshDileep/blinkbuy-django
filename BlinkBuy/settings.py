@@ -164,6 +164,7 @@ STATICFILES_DIRS = [
     BASE_DIR / 'static'
 ]
 WHITENOISE_SKIP_COMPRESS_EXTENSIONS = ['map']
+WHITENOISE_SKIP_MISSING_FILES = True
 
 
 # WhiteNoise (production static handling)
