@@ -156,13 +156,14 @@ USE_TZ = True
 # =========================
 # STATIC FILES
 # =========================
-WHITENOISE_SKIP_COMPRESS_EXTENSIONS = ['map']
+
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 STATICFILES_DIRS = [
     BASE_DIR / 'static'
 ]
+WHITENOISE_SKIP_COMPRESS_EXTENSIONS = ['map']
 
 
 # WhiteNoise (production static handling)
