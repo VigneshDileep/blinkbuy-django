@@ -1,58 +1,72 @@
-{% extends  "base.html"  %}
+{% extends "base.html" %}
 {% block content %}
-
-{%load static%}
-
+{% load static %}
 
 
-<!-- ========================= SECTION MAIN ========================= -->
-<section class="section-intro padding-y-sm">
-<div class="container">
-
-<div class="intro-banner-wrap">
-	<img src="{% static 'images/banners/2.png' %}" class="img-fluid rounded w-100">
-</div>
-
-</div> <!-- container //  -->
+<!-- ========================= HERO ========================= -->
+<section class="hero-section">
+  <div class="container">
+    <div class="hero-banner">
+      <img src="{% static 'images/banners/2.png' %}" alt="Banner">
+    </div>
+  </div>
 </section>
-<!-- ========================= SECTION MAIN END// ========================= -->
 
-<!-- ========================= SECTION  ========================= -->
-<section class="section-name padding-y-sm">
-<div class="container">
+<!-- ========================= POPULAR PRODUCTS ========================= -->
+<section class="products-section">
+  <div class="container">
 
-<header class="section-heading">
-	<a href="{% url 'store' %}" class="btn btn-outline-primary float-right">See all</a>
-	<h3 class="section-title">Popular products</h3>
-</header><!-- sect-heading -->
+    <div class="section-header-row">
+      <div>
+        <p class="section-eyebrow">Featured</p>
+        <h2 class="section-title">Popular Products</h2>
+      </div>
+      <a href="{% url 'store' %}" class="btn-see-all">
+        Browse all <i class="fa fa-arrow-right" style="font-size:12px;"></i>
+      </a>
+    </div>
 
-	
-<div class="row">
-	{% for product in products %}
-	<div class="col-md-3">
-		<div class="card card-product-grid">
-			<a href="{{ product.get_url }}" class="img-wrap"> <img src="{{product.images.url}}"> </a>
-			<figcaption class="info-wrap">
-				<a href="{{ product.get_url }}" class="title">{{ product.product_name}}</a>
-				<div class="price mt-1">{{product.price}}</div> <!-- price-wrap.// -->
-			</figcaption>
-		</div>
-	</div> <!-- col.// -->
-	{% endfor %}
-</div> <!-- row.// -->
+    <div class="row">
+      {% if products %}
+        {% for product in products %}
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+          <div class="product-card">
 
-</div><!-- container // -->
+            <a href="{{ product.get_url }}" class="img-wrap">
+              <img src="{{ product.images.url }}" alt="{{ product.product_name }}">
+            </a>
+
+            <div class="info-wrap">
+              <a href="{{ product.get_url }}" class="product-name">{{ product.product_name }}</a>
+
+              <div class="product-price">${{ product.price }}</div>
+
+              <div class="stars">
+                <i class="fa fa-star{% if product.averageReview < 0.5 %}-o{% elif product.averageReview >= 0.5 and product.averageReview < 1 %}-half-o{% endif %}"></i>
+                <i class="fa fa-star{% if product.averageReview < 1.5 %}-o{% elif product.averageReview >= 1.5 and product.averageReview < 2 %}-half-o{% endif %}"></i>
+                <i class="fa fa-star{% if product.averageReview < 2.5 %}-o{% elif product.averageReview >= 2.5 and product.averageReview < 3 %}-half-o{% endif %}"></i>
+                <i class="fa fa-star{% if product.averageReview < 3.5 %}-o{% elif product.averageReview >= 3.5 and product.averageReview < 4 %}-half-o{% endif %}"></i>
+                <i class="fa fa-star{% if product.averageReview < 4.5 %}-o{% elif product.averageReview >= 4.5 and product.averageReview < 5 %}-half-o{% endif %}"></i>
+              </div>
+
+              <a href="{{ product.get_url }}" class="btn-quick">View Details →</a>
+            </div>
+
+          </div>
+        </div>
+        {% endfor %}
+      {% else %}
+        <div class="col-12">
+          <div class="empty-products">
+            <i class="fa fa-box-open" style="font-size:48px;color:#dee2e6;"></i>
+            <h4>No products yet</h4>
+            <p>Check back soon for new arrivals.</p>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+
+  </div>
 </section>
-<!-- ========================= SECTION  END// ========================= -->
-
-
-
-
-<!-- ========================= FOOTER ========================= -->
-
-<!-- ========================= FOOTER END // ========================= -->
-
-</body>
-</html>
 
 {% endblock %}

@@ -47,10 +47,11 @@ $(document).ready(function() {
 
 {% comment %} navbar {% endcomment %}
 {% include 'include/navbar.html' %}
-
- {% block content %}
- {% comment %} content {% endcomment %}
- {% endblock %}
+ <main>
+	{% block content %}
+	{% comment %} content {% endcomment %}
+	{% endblock %}
+ </main>
 
  {% comment %} footer {% endcomment %}
 {% include 'include/footer.html' %}

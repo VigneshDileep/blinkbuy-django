@@ -1,200 +1,142 @@
 {% extends 'base.html' %}
-
 {% block content %}
-
 {% load static %}
-<!-- ========================= SECTION PAGETOP ========================= -->
-<section class="section-pagetop bg">
-<div class="container">
-	{% if 'search' in request.path %}
-		<h2 class="title-page">Search Results</h2>
-	{% else %}
-		<h2 class="title-page">Our Store</h2>
-	{% endif %}
-	
-</div> <!-- container //  -->
+
+
+<!-- ========================= HERO ========================= -->
+<section class="store-hero">
+  <div class="container">
+    <div class="d-flex align-items-center justify-content-between">
+      <div>
+        {% if 'search' in request.path %}
+          <p style="font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:#6610f2;margin-bottom:6px;">Search</p>
+          <h2 style="font-size:32px;font-weight:800;margin:0;color:#212529;">Search Results</h2>
+        {% else %}
+          <p style="font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:#6610f2;margin-bottom:6px;">Browse</p>
+          <h2 style="font-size:32px;font-weight:800;margin:0;color:#212529;">STORE</h2>
+        {% endif %}
+      </div>
+      <nav aria-label="breadcrumb" class="d-none d-md-block">
+        <ol class="breadcrumb mb-0" style="background:transparent;padding:0;font-size:14px;">
+          <li class="breadcrumb-item"><a href="{% url 'home' %}" style="color:#0d6efd;text-decoration:none;">Home</a></li>
+          <li class="breadcrumb-item active" style="color:#6c757d;">
+            {% if 'search' in request.path %}Search{% else %}Store{% endif %}
+          </li>
+        </ol>
+      </nav>
+    </div>
+  </div>
 </section>
-<!-- ========================= SECTION INTRO END// ========================= -->
 
-<!-- ========================= SECTION CONTENT ========================= -->
-<section class="section-content padding-y">
+<!-- ========================= CONTENT ========================= -->
+<section class="section-content" style="padding: 40px 0 60px;">
 <div class="container">
-
 <div class="row">
-	<aside class="col-md-3">
-		
-<div class="card">
-	<article class="filter-group">
-		<header class="card-header">
-			<a href="#" data-toggle="collapse" data-target="#collapse_1" aria-expanded="true" class="">
-				<i class="icon-control fa fa-chevron-down"></i>
-				<h6 class="title">Categories</h6>
-			</a>
-		</header>
-		<div class="filter-content collapse show" id="collapse_1" style="">
-			<div class="card-body">
-				
-				<ul class="list-menu">
-                <li><a href="{% url 'store' %}">All Products </a></li>
-                {% for category in links %}
-				<li><a href="{{category.get_url}}">{{category.category_name}} </a></li>
-                {% endfor %}
-				</ul>
 
-			</div> <!-- card-body.// -->
-		</div>
-	</article> <!-- filter-group  .// -->
-	<article class="filter-group">
-		<header class="card-header">
-			<a href="#" data-toggle="collapse" data-target="#collapse_4" aria-expanded="true" class="">
-				<i class="icon-control fa fa-chevron-down"></i>
-				<h6 class="title">Sizes </h6>
-			</a>
-		</header>
-		<div class="filter-content collapse show" id="collapse_4" style="">
-			<div class="card-body">
-			  <label class="checkbox-btn">
-			    <input type="checkbox">
-			    <span class="btn btn-light"> XS </span>
-			  </label>
+  <!-- Sidebar -->
+  <aside class="col-md-3 mb-4">
+    <div class="filter-card card">
+      <article class="filter-group">
+        <header class="card-header d-flex align-items-center justify-content-between">
+          <h6>Categories</h6>
+          <i class="fa fa-tags" style="color:#0d6efd;font-size:14px;"></i>
+        </header>
+        <div class="filter-content">
+          <ul class="category-list">
+            <li><a href="{% url 'store' %}" class="{% if not request.GET.category %}active-cat{% endif %}">
+              <i class="fa fa-th-large" style="margin-right:8px;font-size:12px;"></i>All Products
+            </a></li>
+            {% for category in links %}
+            <li><a href="{{ category.get_url }}">
+              <i class="fa fa-chevron-right" style="margin-right:8px;font-size:10px;color:#adb5bd;"></i>{{ category.category_name }}
+            </a></li>
+            {% endfor %}
+          </ul>
+        </div>
+      </article>
+    </div>
+  </aside>
 
-			  <label class="checkbox-btn">
-			    <input type="checkbox">
-			    <span class="btn btn-light"> SM </span>
-			  </label>
+  <!-- Main content -->
+  <main class="col-md-9">
 
-			  <label class="checkbox-btn">
-			    <input type="checkbox">
-			    <span class="btn btn-light"> LG </span>
-			  </label>
+    <!-- Results bar -->
+    <div class="results-bar d-flex align-items-center justify-content-between">
+      <span><strong>{{ product_count }}</strong> items found</span>
+      <span style="font-size:13px;color:#adb5bd;">
+        <i class="fa fa-grid" style="margin-right:4px;"></i> Grid view
+      </span>
+    </div>
 
-			  <label class="checkbox-btn">
-			    <input type="checkbox">
-			    <span class="btn btn-light"> XXL </span>
-			  </label>
-		</div><!-- card-body.// -->
-		</div>
-	</article> <!-- filter-group .// -->
-	
-	<article class="filter-group">
-		<header class="card-header">
-			<a href="#" data-toggle="collapse" data-target="#collapse_3" aria-expanded="true" class="">
-				<i class="icon-control fa fa-chevron-down"></i>
-				<h6 class="title">Price range </h6>
-			</a>
-		</header>
-		<div class="filter-content collapse show" id="collapse_3" style="">
-			<div class="card-body">
-				
-				<div class="form-row">
-				<div class="form-group col-md-6">
-				  <label>Min</label>
-				  <!-- <input class="form-control" placeholder="$0" type="number"> -->
-				  	<select class="mr-2 form-control">
-						<option value="0">$0</option>
-						<option value="50">$50</option>
-						<option value="100">$100</option>
-						<option value="150">$150</option>
-						<option value="200">$200</option>
-						<option value="500">$500</option>
-						<option value="1000">$1000</option>
-					</select>
-				</div>
-				<div class="form-group text-right col-md-6">
-				  <label>Max</label>
-				  	<select class="mr-2 form-control">
-						<option value="50">$50</option>
-						<option value="100">$100</option>
-						<option value="150">$150</option>
-						<option value="200">$200</option>
-						<option value="500">$500</option>
-						<option value="1000">$1000</option>
-						<option value="2000">$2000+</option>
-					</select>
-				</div>
-				</div> <!-- form-row.// -->
-				<button class="btn btn-block btn-primary">Apply</button>
-			</div><!-- card-body.// -->
-		</div>
-	</article> <!-- filter-group .// -->
-	
-</div> <!-- card.// -->
+    <!-- Product grid -->
+    <div class="row">
+      {% if products %}
+        {% for product in products %}
+        <div class="col-md-4 col-sm-6 mb-4">
+          <div class="product-card">
+            <div class="img-wrap">
+              <a href="{{ product.get_url }}">
+                <img src="{{ product.images.url }}" alt="{{ product.product_name }}">
+              </a>
+            </div>
+            <figcaption class="info-wrap">
+              <a href="{{ product.get_url }}" class="title">{{ product.product_name }}</a>
+              <div class="price">${{ product.price }}</div>
+              <a href="{{ product.get_url }}" class="btn-view">View Details →</a>
+            </figcaption>
+          </div>
+        </div>
+        {% endfor %}
+      {% else %}
+        <div class="col-12">
+          <div class="empty-state">
+            <div class="empty-icon">🔍</div>
+            <h4>No results found</h4>
+            <p>Try a different keyword or browse all categories.</p>
+            <a href="{% url 'store' %}" class="btn btn-primary" style="border-radius:50px;padding:10px 28px;">Browse All Products</a>
+          </div>
+        </div>
+      {% endif %}
+    </div>
 
-	</aside> <!-- col.// -->
-	<main class="col-md-9">
+    <!-- Pagination -->
+    {% if products.has_other_pages %}
+    <nav class="mt-4" aria-label="Page navigation">
+      <ul class="pagination justify-content-center flex-wrap" style="gap:4px;">
+        {% if products.has_previous %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ products.previous_page_number }}">
+              <i class="fa fa-chevron-left" style="font-size:11px;"></i> Prev
+            </a>
+          </li>
+        {% else %}
+          <li class="page-item disabled"><a class="page-link" href="#">← Prev</a></li>
+        {% endif %}
 
-<header class="border-bottom mb-4 pb-3">
-		<div class="form-inline">
-			<span class="mr-md-auto">{{ product_count }} Items found </span>
-			
-		</div>
-</header><!-- sect-heading -->
+        {% for i in products.paginator.page_range %}
+          {% if products.number == i %}
+            <li class="page-item active"><a class="page-link" href="#">{{ i }}</a></li>
+          {% else %}
+            <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+          {% endif %}
+        {% endfor %}
 
-<div class="row">
-	{% if products %}
-    {% for product in products %}
-        <div class="col-md-4">
-            <figure class="card card-product-grid">
-                <div class="img-wrap"> 
-                    
-                   <a href="{{ product.get_url }}"> <img src="{{product.images.url}}"> </a>
-                    
-                </div> <!-- img-wrap.// -->
-                <figcaption class="info-wrap">
-                    <div class="fix-height">
-                        <a href="{{ product.get_url }}" class="title">{{product.product_name}}</a>
-                        <div class="price-wrap mt-2">
-                            <span class="price">${{product.price}}</span>                          
-                        </div> <!-- price-wrap.// -->
-                    </div>
-                    <a href="{{ product.get_url}}" class="btn btn-block btn-success">View Details</a>
-                </figcaption>
-            </figure>
-        </div> <!-- col.// -->
-    {% endfor %}
-	{% else %}
-		<div class="col-md-12" style="text-align: center;">
-			<h3>No Results Found Try Again</h3>
-		</div>
-	{% endif %}
+        {% if products.has_next %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ products.next_page_number }}">
+              Next <i class="fa fa-chevron-right" style="font-size:11px;"></i>
+            </a>
+          </li>
+        {% else %}
+          <li class="page-item disabled"><a class="page-link" href="#">Next →</a></li>
+        {% endif %}
+      </ul>
+    </nav>
+    {% endif %}
 
-</div> <!-- row end.// -->
-
-
-<nav class="mt-4" aria-label="Page navigation sample">
-{% if products.has_other_pages %}
-  <ul class="pagination">
-	{% comment %} previous page {% endcomment %}
-	{% if products.has_previous %}
-    	<li class="page-item"><a class="page-link" href="?page={{ products.previous_page_number }}">Previous</a></li>
-	{% else %}
-		<li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
-	{% endif %}
-	{% comment %} page numbers {% endcomment %}
-	{% for i in products.paginator.page_range %}
-		{% if products.number == i %}
-   			<li class="page-item active"><a class="page-link" href="#">{{ i }}</a></li>
-		{% else %}
-			<li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
-		{% endif %}
-	{% endfor %}
-	{% comment %} next page {% endcomment %}
-	{% if products.has_next %}
-    	<li class="page-item"><a class="page-link" href="?page={{ products.next_page_number }}">Next</a></li>
-	{% else %}
-		<li class="page-item disabled"><a class="page-link" href="#">Next</a></li>
-	{% endif %}
-  </ul>
-{% endif %}
-</nav>
-
-	</main> <!-- col.// -->
-
+  </main>
 </div>
-
-</div> <!-- container .//  -->
+</div>
 </section>
-<!-- ========================= SECTION CONTENT END// ========================= -->
-
 
 {% endblock %}

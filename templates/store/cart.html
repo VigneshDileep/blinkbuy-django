@@ -1,124 +1,405 @@
 {% extends "base.html" %}
-
 {% block content %}
 {% load static %}
 
-<section class="section-content padding-y bg">
-<div class="container">
+<style>
+  :root {
+    --bg:          #F7F8FC;
+    --surface:     #FFFFFF;
+    --border:      #E8EAF0;
+    --accent:      #4F46E5;
+    --accent-h:    #4338CA;
+    --accent-soft: #EEF2FF;
+    --text-primary:#1A1D2E;
+    --text-muted:  #6B7280;
+    --danger:      #EF4444;
+    --danger-soft: #FEF2F2;
+    --radius:      14px;
+    --shadow:      0 2px 12px rgba(79,70,229,.07);
+  }
 
-<!-- ============================ COMPONENT 1 ================================= -->
-{% if not cart_items %}
-	<div class="card">
-		<div class="card-body">
-			<h3 class="text-center">Your cart is empty</h3>
-			<p class="text-center">Looks like you haven't added anything to your cart yet.</p>
-			<p class="text-center"><a href="{% url 'store' %}" class="btn btn-primary">Start Shopping</a></p>
-		</div> <!-- card-body.// -->
-	</div> <!-- card.// -->
-{% else %}
+  .cart-shell {
+    background: var(--bg);
+    min-height: 80vh;
+    padding: 2.5rem 0;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
 
-	<div class="row">
-		<aside class="col-lg-9">
-	<div class="card">
-	<table class="table table-borderless table-shopping-cart">
-	<thead class="text-muted">
-	<tr class="small text-uppercase">
-	<th scope="col">Product</th>
-	<th scope="col" width="120">Quantity</th>
-	<th scope="col" width="120">Price</th>
-	<th scope="col" class="text-right" width="200"> </th>
-	</tr>
-	</thead>
-	<tbody>
-	{% for cart_item in cart_items %}
-		<tr>
-			<td>
-				<figure class="itemside align-items-center">
-					<div class="aside"><a href="{{cart_item.product.get_url }}"><img src="{{ cart_item.product.images.url}}" class="img-sm"></a></div>
-					<figcaption class="info">
-						<a href="{{cart_item.product.get_url }}" class="title text-dark">{{ cart_item.product.product_name }}</a>
-						<p class="text-muted small"> 
-							{% if cart_item.variations.all %}
-								{% for variation in cart_item.variations.all %}
-									{{ variation.variation_category | capfirst }} : {{ variation.variation_value | capfirst }} <br>
-								{% endfor %}
-							{% endif %}
-						</p>
-					</figcaption>
-				</figure>
-			</td>
-			<td> 
-				<!-- col.// -->
-							<div class="col"> 
-								<div class="input-group input-spinner">
-									<div class="input-group-prepend">
-									<a href="{% url 'remove_cart_item' cart_item.product.id cart_item.id%}" class="btn btn-light" type="button" id="button-plus"> <i class="fa fa-minus"></i> </a>
-									</div>
-									<input type="text" class="form-control"  value="{{ cart_item.quantity }}">
-									<div class="input-group-append">
-										<form action="{% url 'add_cart' cart_item.product.id %}" method="POST">
-											{% csrf_token %}
-											{% for item in cart_item.variations.all %}
-												<input type="hidden" name="{{item.variation_category | lower }}" value="{{ item.variation_value | capfirst }}">
-											{% endfor %}
-											<button class="btn btn-light" type="submit" id="button-minus"> <i class="fa fa-plus"></i> </a>
-										</form>
-									</div>
-								</div> <!-- input-group.// -->
-							</div> <!-- col.// -->
-			</td>
-			<td> 
-				<div class="price-wrap"> 
-					<var class="price">${{ cart_item.sub_total }}</var> 
-					<small class="text-muted"> ${{ cart_item.product.price }} each </small> 
-				</div> <!-- price-wrap .// -->
-			</td>
-			<td class="text-right"> 
-			<a href="{% url 'delete_cart_item' cart_item.product.id cart_item.id %}" onclick="return confirm('Are you sure you want to remove this item from your cart?')" class="btn btn-danger"> Remove</a>
-			</td>
-		</tr>
-	{% endfor %}
-	</tbody>
-	</table>
-	</div> <!-- card.// -->
+  /* ── Page title ──────────────────────────────────────── */
+  .cart-title {
+    font-size: 1.45rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    letter-spacing: -.03em;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+  }
+  .cart-title-badge {
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: .72rem;
+    font-weight: 700;
+    padding: .2rem .6rem;
+    border-radius: 99px;
+    letter-spacing: .04em;
+  }
 
-		</aside> <!-- col.// -->
-		<aside class="col-lg-3">
+  /* ── Empty state ─────────────────────────────────────── */
+  .cart-empty {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 4rem 2rem;
+    text-align: center;
+  }
+  .cart-empty-icon {
+    width: 64px; height: 64px;
+    background: var(--accent-soft);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 1.25rem;
+    color: var(--accent);
+  }
+  .cart-empty h3 { font-size: 1.2rem; font-weight: 700; color: var(--text-primary); margin-bottom: .4rem; }
+  .cart-empty p  { font-size: .875rem; color: var(--text-muted); margin-bottom: 1.5rem; }
 
-			<div class="card">
-			<div class="card-body">
-				<dl class="dlist-align">
-				<dt>Total price:</dt>
-				<dd class="text-right">${{total}}</dd>
-				</dl>
-				<dl class="dlist-align">
-				<dt>Tax:</dt>
-				<dd class="text-right"> ${{ tax }}</dd>
-				</dl>
-				<dl class="dlist-align">
-				<dt>Total:</dt>
-				<dd class="text-right text-dark b"><strong>${{ grand_total }}</strong></dd>
-				</dl>
-				<hr>
-				<p class="text-center mb-3">
-					<img src="{% static 'images/misc/payments.png' %}" height="26">
-				</p>
-				<a href="{% url 'checkout' %}" class="btn btn-primary btn-block"> Checkout </a>
-				<a href="{% url 'store' %}" class="btn btn-light btn-block">Continue Shopping</a>
-			</div> <!-- card-body.// -->
-			</div> <!-- card.// -->
+  /* ── Cart table card ─────────────────────────────────── */
+  .cart-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
 
-	</aside> <!-- col.// -->
+  .cart-table { width: 100%; border-collapse: collapse; }
+  .cart-table thead tr {
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+  }
+  .cart-table th {
+    font-size: .67rem;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    padding: .9rem 1.25rem;
+  }
+  .cart-table td {
+    padding: 1.1rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  .cart-table tbody tr:last-child td { border-bottom: none; }
 
+  /* ── Product cell ────────────────────────────────────── */
+  .cart-product {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .cart-product-img {
+    width: 60px; height: 60px;
+    border-radius: 10px;
+    object-fit: cover;
+    border: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .cart-product-name {
+    font-size: .875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    text-decoration: none;
+    display: block;
+    margin-bottom: .2rem;
+  }
+  .cart-product-name:hover { color: var(--accent); }
+  .cart-product-variant {
+    font-size: .75rem;
+    color: var(--text-muted);
+    margin: 0;
+    line-height: 1.5;
+  }
 
-	</div> <!-- row.// -->
-{% endif %}
-<!-- ============================ COMPONENT 1 END .// ================================= -->
+  /* ── Qty stepper ─────────────────────────────────────── */
+  .qty-stepper {
+    display: inline-flex;
+    align-items: center;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--surface);
+  }
+  .qty-btn {
+    width: 32px; height: 32px;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--bg);
+    border: none;
+    cursor: pointer;
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: background .15s;
+    flex-shrink: 0;
+  }
+  .qty-btn:hover { background: var(--accent-soft); color: var(--accent); }
+  .qty-value {
+    width: 36px;
+    text-align: center;
+    font-size: .875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    border: none;
+    outline: none;
+    pointer-events: none;
+    background: transparent;
+  }
+  /* hide the qty-form submit button visually but keep it functional */
+  .qty-form { display: inline; }
+  .qty-form .qty-btn[type="submit"] { background: var(--bg); border: none; }
+  .qty-form .qty-btn[type="submit"]:hover { background: var(--accent-soft); color: var(--accent); }
 
-</div> <!-- container .//  -->
+  /* ── Price cell ──────────────────────────────────────── */
+  .cart-subtotal {
+    font-size: .95rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    display: block;
+  }
+  .cart-unit { font-size: .75rem; color: var(--text-muted); }
+
+  /* ── Remove btn ──────────────────────────────────────── */
+  .cart-remove {
+    display: inline-flex;
+    align-items: center;
+    gap: .3rem;
+    font-size: .78rem;
+    font-weight: 600;
+    color: var(--danger);
+    background: var(--danger-soft);
+    border: 1px solid #FECACA;
+    border-radius: 7px;
+    padding: .35rem .75rem;
+    text-decoration: none;
+    transition: background .15s;
+    white-space: nowrap;
+  }
+  .cart-remove:hover { background: #FEE2E2; color: var(--danger); text-decoration: none; }
+
+  /* ── Summary card ────────────────────────────────────── */
+  .summary-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 1.5rem;
+    position: sticky;
+    top: 1.5rem;
+  }
+  .summary-title {
+    font-size: .72rem;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    border-bottom: 1px solid var(--accent-soft);
+    padding-bottom: .6rem;
+    margin-bottom: 1rem;
+  }
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: .875rem;
+    color: var(--text-muted);
+    margin-bottom: .65rem;
+  }
+  .summary-row.total {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-top: .75rem;
+    padding-top: .75rem;
+    border-top: 1px solid var(--border);
+    margin-bottom: 1.25rem;
+  }
+  .summary-row span:last-child { color: var(--text-primary); font-weight: 600; }
+  .summary-row.total span:last-child { color: var(--accent); font-size: 1.1rem; }
+
+  .btn-checkout {
+    display: block;
+    width: 100%;
+    height: 2.75rem;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 9px;
+    font-size: .9rem;
+    font-weight: 600;
+    text-align: center;
+    line-height: 2.75rem;
+    text-decoration: none;
+    transition: background .18s, transform .15s;
+    margin-bottom: .75rem;
+  }
+  .btn-checkout:hover { background: var(--accent-h); color: #fff; text-decoration: none; transform: translateY(-1px); }
+
+  .btn-continue {
+    display: block;
+    width: 100%;
+    height: 2.5rem;
+    background: var(--bg);
+    color: var(--text-muted);
+    border: 1.5px solid var(--border);
+    border-radius: 9px;
+    font-size: .85rem;
+    font-weight: 600;
+    text-align: center;
+    line-height: 2.35rem;
+    text-decoration: none;
+    transition: border-color .15s, color .15s;
+  }
+  .btn-continue:hover { border-color: var(--accent); color: var(--accent); text-decoration: none; }
+
+  .summary-payments {
+    text-align: center;
+    margin: 1rem 0 0;
+    opacity: .6;
+  }
+</style>
+
+<section class="cart-shell">
+  <div class="container">
+
+    {% if not cart_items %}
+    <!-- ── Empty state ──────────────────────────────────── -->
+    <div class="cart-empty">
+      <div class="cart-empty-icon">
+        <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+          <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <path d="M16 10a4 4 0 0 1-8 0"/>
+        </svg>
+      </div>
+      <h3>Your cart is empty</h3>
+      <p>Looks like you haven't added anything yet.</p>
+      <a href="{% url 'store' %}" class="btn-checkout" style="display:inline-block;width:auto;padding:0 2rem;">Start Shopping</a>
+    </div>
+
+    {% else %}
+    <!-- ── Cart title ────────────────────────────────────── -->
+    <div class="cart-title">
+      Shopping Cart
+      <span class="cart-title-badge">{{ cart_items|length }} item{{ cart_items|length|pluralize }}</span>
+    </div>
+
+    <div class="row">
+      <!-- ── Items table ───────────────────────────────── -->
+      <div class="col-lg-9 mb-4">
+        <div class="cart-card">
+          <table class="cart-table">
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for cart_item in cart_items %}
+              <tr>
+                <!-- Product -->
+                <td>
+                  <div class="cart-product">
+                    <a href="{{ cart_item.product.get_url }}">
+                      <img src="{{ cart_item.product.images.url }}" class="cart-product-img" alt="{{ cart_item.product.product_name }}">
+                    </a>
+                    <div>
+                      <a href="{{ cart_item.product.get_url }}" class="cart-product-name">{{ cart_item.product.product_name }}</a>
+                      {% if cart_item.variations.all %}
+                      <p class="cart-product-variant">
+                        {% for variation in cart_item.variations.all %}
+                          {{ variation.variation_category|capfirst }}: {{ variation.variation_value|capfirst }}<br>
+                        {% endfor %}
+                      </p>
+                      {% endif %}
+                    </div>
+                  </div>
+                </td>
+
+                <!-- Quantity stepper -->
+                <td>
+                  <div class="qty-stepper">
+                    <a href="{% url 'remove_cart_item' cart_item.product.id cart_item.id %}" class="qty-btn" title="Decrease">
+                      <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14"/></svg>
+                    </a>
+                    <input class="qty-value" type="text" value="{{ cart_item.quantity }}" readonly>
+                    <form class="qty-form" action="{% url 'add_cart' cart_item.product.id %}" method="POST">
+                      {% csrf_token %}
+                      {% for item in cart_item.variations.all %}
+                        <input type="hidden" name="{{ item.variation_category|lower }}" value="{{ item.variation_value|capfirst }}">
+                      {% endfor %}
+                      <button class="qty-btn" type="submit" title="Increase">
+                        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+                      </button>
+                    </form>
+                  </div>
+                </td>
+
+                <!-- Price -->
+                <td>
+                  <span class="cart-subtotal">${{ cart_item.sub_total }}</span>
+                  <span class="cart-unit">${{ cart_item.product.price }} each</span>
+                </td>
+
+                <!-- Remove -->
+                <td>
+                  <a href="{% url 'delete_cart_item' cart_item.product.id cart_item.id %}"
+                     onclick="return confirm('Remove this item from your cart?')"
+                     class="cart-remove">
+                    <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                      <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/>
+                    </svg>
+                    Remove
+                  </a>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── Summary sidebar ───────────────────────────── -->
+      <div class="col-lg-3">
+        <div class="summary-card">
+          <div class="summary-title">Order Summary</div>
+          <div class="summary-row">
+            <span>Subtotal</span>
+            <span>${{ total }}</span>
+          </div>
+          <div class="summary-row">
+            <span>Tax</span>
+            <span>${{ tax }}</span>
+          </div>
+          <div class="summary-row total">
+            <span>Total</span>
+            <span>${{ grand_total }}</span>
+          </div>
+          <a href="{% url 'checkout' %}" class="btn-checkout">Proceed to Checkout</a>
+          <a href="{% url 'store' %}" class="btn-continue">Continue Shopping</a>
+          <div class="summary-payments">
+            <img src="{% static 'images/misc/payments.png' %}" height="22" alt="Payment methods">
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+  </div>
 </section>
-
-
-
 
 {% endblock %}

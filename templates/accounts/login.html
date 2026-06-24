@@ -1,48 +1,66 @@
 {% extends "base.html" %}
-
-{% block content%}
+{% block content %}
 {% load static %}
-<!-- ========================= SECTION CONTENT ========================= -->
-<section class="section-conten padding-y" style="min-height:84vh">
 
-<!-- ============================ COMPONENT LOGIN   ================================= -->
-{% if request.GET.command == 'verification' %}
-    <div class="container mx-auto alert alert-info text-center" role="alert" style="max-width: 1024px; margin-top:100px;">
-        A verification email has been sent to <strong>{{ request.GET.email }}</strong>. Please check your inbox and click the activation link to verify your account.
-        <br><br>
-        <a href="{% url 'login' %}" class="btn btn-primary">Back to Login</a>
+
+
+<section class="auth-shell">
+
+  {% if request.GET.command == 'verification' %}
+  <!-- ── Email verification notice ──────────────────── -->
+  <div class="auth-notice">
+    <div class="auth-notice-icon">
+      <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+        <polyline points="22,6 12,13 2,6"/>
+      </svg>
     </div>
-{% else %}
-	<div class="card mx-auto" style="max-width: 380px; margin-top:100px;">
-      <div class="card-body">
-      <h4 class="card-title mb-4">Sign in</h4>
-      {% include 'include/alerts.html' %}
-      <form action = "{% url 'login' %}" method="POST">
-        {% csrf_token %}
-          <div class="form-group">
-			 <input type="email" class="form-control" placeholder="Email Address" name='email' >
-          </div> <!-- form-group// -->
-          <div class="form-group">
-			<input type="password" class="form-control" placeholder="Password" name='password' >
-          </div> <!-- form-group// -->
-          
-          <div class="form-group">
-          	<a href="{% url 'forgotPassword' %}" class="float-right">Forgot password?</a> 
-           
-          </div> <!-- form-group form-check .// -->
-          <div class="form-group">
-              <button type="submit" class="btn btn-primary btn-block"> Login  </button>
-          </div> <!-- form-group// -->    
-      </form>
-      </div> <!-- card-body.// -->
-    </div> <!-- card .// -->
+    <h4>Check your inbox</h4>
+    <p>
+      A verification email has been sent to
+      <strong>{{ request.GET.email }}</strong>.<br>
+      Click the activation link to verify your account.
+    </p>
+    <a href="{% url 'login' %}" class="btn-accent">Back to Login</a>
+  </div>
 
-     <p class="text-center mt-4">Don't have account? <a href="{% url 'register' %}">Sign up</a></p>
-     <br><br>
-{% endif %}
-<!-- ============================ COMPONENT LOGIN  END.// ================================= -->
+  {% else %}
+  <!-- ── Login card ──────────────────────────────────── -->
+  <div>
+    <div class="auth-card">
+      <div class="auth-stripe">
+        <div class="auth-stripe-eyebrow">Welcome back</div>
+        <h4>Sign in to your account</h4>
+      </div>
 
+      <div class="auth-body">
+        {% include 'include/alerts.html' %}
+        <form action="{% url 'login' %}" method="POST">
+          {% csrf_token %}
+
+          <div class="auth-field">
+            <label class="auth-label">Email Address</label>
+            <input type="email" name="email" placeholder="you@example.com">
+          </div>
+
+          <div class="auth-field">
+            <label class="auth-label">Password</label>
+            <input type="password" name="password" placeholder="••••••••">
+          </div>
+
+          <a href="{% url 'forgotPassword' %}" class="auth-forgot">Forgot password?</a>
+
+          <button type="submit" class="auth-btn">Sign In</button>
+        </form>
+      </div>
+    </div>
+
+    <p class="auth-footer">
+      Don't have an account? <a href="{% url 'register' %}">Sign up</a>
+    </p>
+  </div>
+  {% endif %}
 
 </section>
-<!-- ========================= SECTION CONTENT END// ========================= -->
- {% endblock %}
+
+{% endblock %}

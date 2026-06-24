@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from carts.models import CartItem
 from django.db.models import Q
 from carts.views import _cart_id
-from .models import Product, ReviewRating
+from .models import Product, ReviewRating, ProductGallery
 from category.models import Category
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from .forms import ReviewForm
@@ -53,12 +53,17 @@ def product_detail(request, category_slug, product_slug):
     # get the reviews
     reviews = ReviewRating.objects.filter(product=single_product, status=True)
 
+    #   get the gallery images
+    product_gallery = ProductGallery.objects.filter(product=single_product)
+
     context = {
         'single_product': single_product,
         'in_cart': in_cart,
         'orderproduct': orderproduct,
-        'reviews' : reviews
+        'reviews' : reviews,
+        'product_gallery': product_gallery
     }
+    
     return render(request, 'store/product_detail.html', context)
 
 def search(request):

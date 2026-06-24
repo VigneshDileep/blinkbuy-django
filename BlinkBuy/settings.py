@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,10 +21,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-@i4uirrjal@i!t#dj#$rkn*e69oae)e1hxopmg@@8hd*4#bkgc'
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG', cast=bool)
 
 ALLOWED_HOSTS = []
 
@@ -43,6 +44,7 @@ INSTALLED_APPS = [
     'carts',
     'orders',
     'paypal.standard.ipn',
+    'django_session_timeout',
 ]
 
 MIDDLEWARE = [
@@ -53,8 +55,16 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'csp.middleware.CSPMiddleware'
+    'csp.middleware.CSPMiddleware',
+    'django_session_timeout.middleware.SessionTimeoutMiddleware',
 ]
+# Set the session timeout duration in seconds (e.g., 1800 seconds = 30 minutes)
+SESSION_EXPIRE_SECONDS = 3600
+# Resets the timeout clock on every user activity/request
+SESSION_EXPIRE_AFTER_LAST_ACTIVITY = True 
+# Optional: Redirect to a custom page (like login) after timeout
+SESSION_TIMEOUT_REDIRECT = 'login'
+
 
 ROOT_URLCONF = 'BlinkBuy.urls'
 
@@ -149,17 +159,17 @@ MESSAGE_TAGS = {
 }
 
 # SMTP configuration
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_HOST_USER = 'vigneshdileep123@gmail.com'
-EMAIL_HOST_PASSWORD = 'xbjs kfln lxse yner'
-EMAIL_USE_TLS = True
+EMAIL_HOST = config('EMAIL_HOST')
+EMAIL_PORT = config('EMAIL_PORT', cast=int)
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+EMAIL_USE_TLS = config('EMAIL_USE_TLS', cast=bool)
 
 
 # Paypal conf
-PAYPAL_RECEIVER_EMAIL = "blinkbuybusiness@gmail.com"
-PAYPAL_TEST = True
+PAYPAL_RECEIVER_EMAIL = config('PAYPAL_RECEIVER_EMAIL')
+PAYPAL_TEST = config('PAYPAL_TEST', cast=bool)
 
 
-PAYPAL_CLIENT_ID = 'AfeATFq9ctivzEAvRv_Slzjgh4lujgA0ti8OqjMP6vU9G9hIe3tOb-ko5Or3BTKhqAuvQkIXM3AxPOCJ' 
-PAYPAL_CLIENT_SECRET = 'EHvmoQNiqtkHa0TroPv7RB6dhQyP5G7KYLw5AjXSGHZcJ9hAWw5p4mVFAuCgNOUk-z6lL4T5cyoKrN7F'
+PAYPAL_CLIENT_ID = config('PAYPAL_CLIENT_ID') 
+PAYPAL_CLIENT_SECRET = config('PAYPAL_CLIENT_SECRET')

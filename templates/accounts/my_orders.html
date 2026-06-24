@@ -1,61 +1,84 @@
 {% extends "base.html" %}
 {% block content %}
-
-<!-- ========================= SECTION CONTENT ========================= -->
- {% load static %}
-
-<section class="section-conten padding-y bg">
-{% include 'include/alerts.html' %}
-<div class="container">
-	<div class="row">
-    {% include "include/dashboard_sidebar.html" %}
-    
-	<main class="col-md-9">
-		<article class="card">
-		<header class="card-header">
-			<strong class="d-inline-block mr-3"> Your Order History </strong>
-		</header>
-		<div class="card-body">
-			<div class="row"> 
-			
-                <div class="col-md-12">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                            <th scope="col">Order</th>
-                            <th scope="col">Billing Name</th>
-                            <th scope="col">Phone</th>
-                            <th scope="col">Oder Total</th>
-                            <th scope="col">Date</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for order in orders %}
-                            <tr>
-                                <th scope="row"><a href="{% url "order_detail" order.order_number %}">{{order.order_number}}</a></th>
-                                <td>{{order.full_name}}</td>
-                                <td>{{order.phone}}</td>
-                                <td>${{order.order_total}}</td>
-                                <td>{{order.created_at}}</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-			
-				
-				
-			</div> <!-- row.// -->
-		</div> <!-- card-body .// -->
-		
-		</article> <!-- order-group.// --> 
-	</main>
-</div> <!-- row.// -->
-</div>
+{% load static %}
 
 
+<section class="db-section">
+  {% include 'include/alerts.html' %}
+
+  <div class="container">
+    <div class="row">
+      {% include "include/dashboard_sidebar.html" %}
+
+      <main class="col-md-9">
+        <article class="db-wrapper">
+
+          <!-- Header -->
+          <header class="db-header">
+            <div class="db-header-icon-ring">
+              <svg fill="none" viewBox="0 0 24 24" stroke-width="1.8" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2"/>
+              </svg>
+            </div>
+            <div>
+              <span class="db-header-eyebrow">Dashboard</span>
+              <span class="db-header-title">Your Order History</span>
+            </div>
+          </header>
+
+          <!-- Body -->
+          <div class="db-body">
+
+            {% if orders %}
+            <div class="orders-table-wrap">
+              <table class="orders-table">
+                <thead>
+                  <tr>
+                    <th>Order</th>
+                    <th>Billing Name</th>
+                    <th>Phone</th>
+                    <th>Order Total</th>
+                    <th>Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for order in orders %}
+                  <tr>
+                    <td>
+                      <a href="{% url 'order_detail' order.order_number %}" class="order-num-link">
+                        #{{ order.order_number }}
+                        <svg fill="none" viewBox="0 0 24 24" stroke-width="2.5" xmlns="http://www.w3.org/2000/svg">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"/>
+                        </svg>
+                      </a>
+                    </td>
+                    <td class="td-name">{{ order.full_name }}</td>
+                    <td class="td-phone">{{ order.phone }}</td>
+                    <td class="td-total">${{ order.order_total }}</td>
+                    <td class="td-date">{{ order.created_at }}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+
+            {% else %}
+            <div class="empty-state">
+              <svg fill="none" viewBox="0 0 24 24" stroke-width="1.2" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5M3.75 10.5h16.5l-1.5 9H5.25l-1.5-9Z"/>
+              </svg>
+              <p>You haven't placed any orders yet.</p>
+            </div>
+            {% endif %}
+
+          </div>
+        </article>
+      </main>
+
+    </div>
+  </div>
 </section>
-<!-- ========================= SECTION CONTENT END// ========================= -->
-
 
 {% endblock %}

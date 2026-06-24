@@ -3,61 +3,77 @@
 {% block content %}
 
 
-<section class="section-content padding-y">
 
-<!-- ============================ COMPONENT REGISTER   ================================= -->
-	<div class="card mx-auto" style="max-width:520px; margin-top:40px;">
-      <article class="card-body">
-		{% include 'include/alerts.html' %}
-		<header class="mb-4"><h4 class="card-title">Sign up</h4></header>
-		<form action="{% url 'register' %}" method="POST">
-			{% csrf_token %}
-				<div class="form-row">
-					<div class="col form-group">
-						<label>First name</label>
-					  	{{ form.first_name }}
-					</div> <!-- form-group end.// -->
-					<div class="col form-group">
-						<label>Last name</label>
-					  	{{ form.last_name }}
-					</div> <!-- form-group end.// -->
-				</div> <!-- form-row end.// -->
-				
-				<div class="form-row">
-					<div class="form-group col-md-6">
-					  <label>Email Address</label>
-					  {{ form.email}}
-					  <small class="form-text text-muted">We'll never share your email with anyone else.</small>
-					</div> <!-- form-group end.// -->
-					<div class="form-group col-md-6">
-					  <label>Phone Number</label>
-					  {{ form.phone_number}}
-					</div> <!-- form-group end.// -->
-				</div> <!-- form-row.// -->
-				<div class="form-row">
-					<div class="form-group col-md-6">
-						<label>Create password</label>
-					    {{ form.password }}
-					</div> <!-- form-group end.// --> 
-					<div class="form-group col-md-6">
-						<label>Repeat password</label>
-					   {{ form.confirm_password }}
-					</div> <!-- form-group end.// -->  
-				</div>
-			    <div class="form-group">
-			        <button type="submit" class="btn btn-primary btn-block"> Register  </button>
-			    </div> <!-- form-group// -->
-				{{form.email.errors}}
-				{{form.non_field_errors}}
-			   
-			        
-			</form>
-		</article><!-- card-body.// -->
-    </div> <!-- card .// -->
-    <p class="text-center mt-4">Have an account? <a href="{% url 'login' %}">Log In</a></p>
-    <br><br>
-<!-- ============================ COMPONENT REGISTER  END.// ================================= -->
+<section class="auth-shell">
+  <div>
+    <div class="auth-card">
 
+      <div class="auth-stripe">
+        <div class="auth-stripe-eyebrow">Get started</div>
+        <h4>Create your account</h4>
+      </div>
 
+      <div class="auth-body">
+        {% include 'include/alerts.html' %}
+
+        <!-- Error summary -->
+        {% if form.email.errors %}
+        <div class="auth-errors">{{ form.email.errors }}</div>
+        {% endif %}
+        {% if form.non_field_errors %}
+        <div class="auth-errors">{{ form.non_field_errors }}</div>
+        {% endif %}
+
+        <form action="{% url 'register' %}" method="POST">
+          {% csrf_token %}
+
+          <!-- Personal details -->
+          <p class="auth-section-label">Personal Details</p>
+          <div class="auth-grid-2">
+            <div class="auth-field">
+              <label class="auth-label">First Name</label>
+              {{ form.first_name }}
+            </div>
+            <div class="auth-field">
+              <label class="auth-label">Last Name</label>
+              {{ form.last_name }}
+            </div>
+          </div>
+
+          <div class="auth-grid-2">
+            <div class="auth-field">
+              <label class="auth-label">Email Address</label>
+              {{ form.email }}
+              <span class="auth-hint">We'll never share your email.</span>
+            </div>
+            <div class="auth-field">
+              <label class="auth-label">Phone Number</label>
+              {{ form.phone_number }}
+            </div>
+          </div>
+
+          <!-- Security -->
+          <p class="auth-section-label" style="margin-top:1.5rem;">Security</p>
+          <div class="auth-grid-2">
+            <div class="auth-field">
+              <label class="auth-label">Password</label>
+              {{ form.password }}
+            </div>
+            <div class="auth-field">
+              <label class="auth-label">Confirm Password</label>
+              {{ form.confirm_password }}
+            </div>
+          </div>
+
+          <button type="submit" class="auth-btn">Create Account</button>
+        </form>
+      </div>
+    </div>
+
+    <p class="auth-footer">
+      Already have an account? <a href="{% url 'login' %}">Sign in</a>
+    </p>
+  </div>
 </section>
+
 {% endblock %}

@@ -70,7 +70,7 @@ def place_order(request, total=0, quantity=0):
             
 
             order = Order.objects.get(user=current_user, is_ordered=False, order_number=order_number)
-            
+            # context for using django-paypal
             # context = {
             #     'order': order,
             #     'cart_items': cart_items,
