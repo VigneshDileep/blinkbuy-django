@@ -3629,3 +3629,26 @@ main {
     transition: border-color .15s, color .15s;
   }
   .btn-continue:hover { border-color: var(--accent); color: var(--accent); text-decoration: none; }
+  img {
+  max-width: 100%;
+  height: auto;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+  @media (max-width: 768px) {
+
+  .container {
+    padding: 10px;
+  }
+
+  .navbar {
+    flex-direction: column;
+  }
+
+  .product-grid {
+    grid-template-columns: 1fr;
+  }
+
+}
