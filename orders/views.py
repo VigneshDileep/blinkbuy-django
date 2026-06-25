@@ -186,7 +186,9 @@ def create_paypal_order(request, order_id):
 # called by JavaScript after user approves payment
 @csrf_exempt
 def capture_paypal_order(request, order_id):
-    order = Order.objects.get(id=order_id, user=request.user)
+    order = Order.objects.get(id=order_id)
+    if order.user != request.user:
+        return JsonResponse({"error": "Unauthorized"}, status=403)
     data = json.loads(request.body)
     paypal_order_id = data.get('paypal_order_id')
     order_number = order.order_number
