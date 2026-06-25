@@ -9,6 +9,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.utils.encoding import force_bytes
 from django.core.mail import EmailMessage
 import requests
+import resend
 from carts.models import Cart, CartItem
 from django.contrib.sites.shortcuts import get_current_site
 from accounts.models import Account
@@ -18,6 +19,7 @@ from orders.models import Order
 from .models import UserProfile
 from orders.models import OrderProduct
 from django.shortcuts import get_object_or_404
+from django.conf import settings
 # Create your views here.
 
 def register(request):
@@ -39,7 +41,7 @@ def register(request):
             profile.user = user
             profile.profile_picture = "default/default-user.avif"
             profile.save()
-            # User Activation Email
+            # User Activation Email         
             current_site = get_current_site(request)
             mail_subject = 'Please activate your account'
             message = render_to_string('accounts/account_verification_email.html',{
@@ -48,10 +50,20 @@ def register(request):
                 'uid': urlsafe_base64_encode(force_bytes(user.pk)),
                 'token': default_token_generator.make_token(user)
             })
-            to_email = email
-            send_email = EmailMessage(mail_subject, message, to=[to_email])
-            send_email.content_subtype = 'html'
-            send_email.send()
+            resend.api_key = settings.RESEND_API_KEY
+            # google smptp 
+            # to_email = email
+            # send_email = EmailMessage(mail_subject, message, to=[to_email])
+            # send_email.content_subtype = 'html'
+            # send_email.send()
+            # resend
+            r = resend.Emails.send({
+                "from": "onboarding@resend.dev",
+                "to": [email],
+                "subject": mail_subject,
+                "html": message
+            })
+            print("Email sent:", r)
             url = reverse('login')
             return redirect(f'{url}?command=verification&email={email}')
             

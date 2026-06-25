@@ -195,6 +195,8 @@ MESSAGE_TAGS = {
 # EMAIL (SMTP)
 # =========================
 
+RESEND_API_KEY = config('RESEND_API_KEY')
+
 EMAIL_HOST = config('EMAIL_HOST')
 EMAIL_PORT = config('EMAIL_PORT', default=587, cast=int)
 EMAIL_HOST_USER = config('EMAIL_HOST_USER')
