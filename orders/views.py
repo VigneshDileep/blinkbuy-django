@@ -25,6 +25,7 @@ from paypalserversdk.models.purchase_unit_request import PurchaseUnitRequest
 from paypalserversdk.models.amount_with_breakdown import AmountWithBreakdown
 from paypalserversdk.exceptions.error_exception import ErrorException
 from paypalserversdk.exceptions.api_exception import ApiException
+import resend
 # 
 # Create your views here.
 def place_order(request, total=0, quantity=0):
@@ -239,10 +240,19 @@ def capture_paypal_order(request, order_id):
             'paypal_order_id': paypal_order_id,
             'ordered_products': ordered_products
         })
-        to_email = request.user.email
-        send_email = EmailMessage(mail_subject, message, to=[to_email])
-        send_email.content_subtype = 'html'
-        send_email.send()
+        # to_email = request.user.email
+        # send_email = EmailMessage(mail_subject, message, to=[to_email])
+        # send_email.content_subtype = 'html'
+        # send_email.send()
+        email = request.user.email
+        resend.api_key = settings.RESEND_API_KEY
+        r = resend.Emails.send({
+            "from": "onboarding@resend.dev",
+            "to": [email],
+            "subject": mail_subject,
+            "html": message
+        })
+        print("Email sent:", r)
 
         data = {
             'order_number': order_number,

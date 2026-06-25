@@ -185,10 +185,18 @@ def forgotPassword(request):
                 'uid': urlsafe_base64_encode(force_bytes(user.pk)),
                 'token': default_token_generator.make_token(user)
             })
-            to_email = email
-            send_email = EmailMessage(mail_subject, message, to=[to_email])
-            send_email.content_subtype = 'html'
-            send_email.send()
+            # to_email = email
+            # send_email = EmailMessage(mail_subject, message, to=[to_email])
+            # send_email.content_subtype = 'html'
+            # send_email.send()
+            resend.api_key = settings.RESEND_API_KEY
+            r = resend.Emails.send({
+                "from": "onboarding@resend.dev",
+                "to": [email],
+                "subject": mail_subject,
+                "html": message
+            })
+            print("Email sent:", r)
             messages.success(request, "Password reset email has been sent to your email address.")
             return redirect('login')
         else:
