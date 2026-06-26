@@ -249,7 +249,7 @@ def capture_paypal_order(request, order_id):
         email = request.user.email
         resend.api_key = settings.RESEND_API_KEY
         r = resend.Emails.send({
-            "from": "onboarding@resend.dev",
+            "from": "BlinkBuy <noreply@blinkbuy.space>",
             "to": [email],
             "subject": mail_subject,
             "html": message
