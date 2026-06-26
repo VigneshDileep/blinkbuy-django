@@ -15,7 +15,12 @@
           <!-- Header -->
           <div class="ep-header">
             <div class="ep-avatar-wrap">
-              <img src="{{ userprofile.profile_picture.url }}" alt="Profile picture" class="ep-avatar">
+              {% comment %} <img src="{{ userprofile.profile_picture.url }}" alt="Profile picture" class="ep-avatar"> {% endcomment %}
+              {% if userprofile.profile_picture %}
+                <img src="{{ userprofile.profile_picture.url }}" alt="Profile picture of {{ user.full_name }}">
+              {% else %}
+                <img src="{% static 'images/default/default-user.avif' %}"  alt="Profile picture of {{ user.full_name }}">
+              {% endif %}
             </div>
             <div class="ep-header-text">
               <div class="ep-header-eyebrow">Account Settings</div>
