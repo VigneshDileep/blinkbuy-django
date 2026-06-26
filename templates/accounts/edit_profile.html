@@ -17,9 +17,9 @@
             <div class="ep-avatar-wrap">
               {% comment %} <img src="{{ userprofile.profile_picture.url }}" alt="Profile picture" class="ep-avatar"> {% endcomment %}
               {% if userprofile.profile_picture %}
-                <img src="{{ userprofile.profile_picture.url }}" alt="Profile picture of {{ user.full_name }}">
+                <img src="{{ userprofile.profile_picture.url }}" alt="Profile picture" class="ep-avatar">
               {% else %}
-                <img src="{% static 'images/default/default-user.avif' %}"  alt="Profile picture of {{ user.full_name }}">
+                <img src="{% static 'images/default/default-user.avif' %}"  alt="Profile picture" class="ep-avatar">
               {% endif %}
             </div>
             <div class="ep-header-text">
