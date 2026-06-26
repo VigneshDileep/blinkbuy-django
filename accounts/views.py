@@ -39,7 +39,7 @@ def register(request):
             # create userprofile
             profile = UserProfile()
             profile.user = user
-            profile.profile_picture = None
+            # profile.profile_picture = None
             profile.save()
             # User Activation Email         
             current_site = get_current_site(request)

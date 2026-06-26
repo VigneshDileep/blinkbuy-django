@@ -74,7 +74,11 @@
                     <!-- Gradient banner + floating avatar -->
                     <div class="profile-banner">
                       <div class="profile-avatar-wrap">
-                        <img src="{{ userprofile.profile_picture.url }}" alt="Profile picture of {{ user.full_name }}">
+                        {% if userprofile.profile_picture %}
+                          <img src="{{ userprofile.profile_picture.url }}" alt="Profile picture of {{ user.full_name }}">
+                        {% else %}
+                          <img src="{% static 'images/default/default-user.avif' %}"  alt="Profile picture of {{ user.full_name }}">
+                        {% endif %}
                         <span class="profile-online" title="Active"></span>
                       </div>
                     </div>
